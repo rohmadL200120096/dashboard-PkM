@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full bg-slate-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Hibah Pengabdian Masyarakat</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            500: '#0284c7',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(8px);
+        }
+    </style>
+</head>
+<body class="h-full text-slate-800 antialiased font-sans">
+
+    <!-- Main Container -->
+    <div class="min-h-screen flex flex-col">
+        <!-- Top Navbar Header -->
+        <header class="bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white shadow-lg sticky top-0 z-30">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="p-2.5 bg-white/10 rounded-xl backdrop-blur-md border border-white/20">
+                            <i class="fa-solid me-0 fa-handshake-angle text-2xl text-blue-400"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-white flex items-center gap-2">
+                                Hibah Pengabdian Masyarakat
+                                <span class="text-xs font-semibold bg-blue-500/30 text-blue-200 border border-blue-400/30 px-2.5 py-0.5 rounded-full">Portal Resmi</span>
+                            </h1>
+                            <p class="text-xs sm:text-sm text-slate-300">Dashboard Interaktif Penerima Hibah & Berkas Laporan Pengabdian</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 self-end md:self-auto">
+                        <button onclick="exportToCSV()" class="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-500 rounded-lg shadow-sm transition-all">
+                            <i class="fa-solid fa-file-excel text-sm"></i>
+                            <span>Export Excel</span>
+                        </button>
+                        <button onclick="window.print()" class="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-slate-200 bg-white/10 hover:bg-white/20 rounded-lg border border-white/10 backdrop-blur-md transition-all">
+                            <i class="fa-solid fa-print text-sm"></i>
+                            <span>Cetak</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+            <!-- Summary Cards Section -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- Card 1 -->
+                <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm hover:shadow-md transition-shadow flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Total Usulan Disetujui</p>
+                        <h3 class="text-2xl font-bold text-slate-900 mt-1" id="stat-total-kegiatan">0</h3>
+                        <span class="inline-flex items-center gap-1 text-xs font-medium text-emerald-600 mt-1">
+                            <i class="fa-solid fa-circle-check"></i> Terverifikasi
+                        </span>
+                    </div>
+                    <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center text-xl font-semibold">
+                        <i class="fa-solid fa-diagram-project"></i>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm hover:shadow-md transition-shadow flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Total Dana Alokasi</p>
+                        <h3 class="text-2xl font-bold text-slate-900 mt-1" id="stat-total-dana">Rp 0</h3>
+                        <span class="inline-flex items-center gap-1 text-xs font-medium text-blue-600 mt-1">
+                            <i class="fa-solid fa-vault"></i> Realisasi Hibah
+                        </span>
+                    </div>
+                    <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center text-xl font-semibold">
+                        <i class="fa-solid fa-rupiah-sign"></i>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm hover:shadow-md transition-shadow flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Dosen Penerima</p>
+                        <h3 class="text-2xl font-bold text-slate-900 mt-1" id="stat-total-dosen">0</h3>
+                        <span class="inline-flex items-center gap-1 text-xs font-medium text-indigo-600 mt-1">
+                            <i class="fa-solid fa-user-graduate"></i> Ketua Pelaksana
+                        </span>
+                    </div>
+                    <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center text-xl font-semibold">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm hover:shadow-md transition-shadow flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Skema Terbanyak</p>
+                        <h3 class="text-xl font-bold text-slate-900 mt-1" id="stat-top-skema">-</h3>
+                        <span class="inline-flex items-center gap-1 text-xs font-medium text-amber-600 mt-1">
+                            <i class="fa-solid fa-layer-group"></i> Dominan
+                        </span>
+                    </div>
+                    <div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center text-xl font-semibold">
+                        <i class="fa-solid fa-award"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filter & Search Control Panel -->
+            <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm space-y-4">
+                <div class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-filter text-blue-600"></i>
+                        <h2 class="text-base font-bold text-slate-900">Filter & Pencarian Data</h2>
+                        <span class="text-xs text-slate-400 font-normal">| Menampilkan data real-time</span>
+                    </div>
+                    
+                    <!-- Search Box -->
+                    <div class="relative flex-1 lg:max-w-md">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                        <input type="text" id="searchInput" onkeyup="filterData()" placeholder="Cari dosen, judul pengabdian, atau prodi..." class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-2 border-t border-slate-100">
+                    <!-- Dropdown Batch -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Periode Batch</label>
+                        <select id="filterBatch" onchange="filterData()" class="w-full bg-slate-50 border border-slate-200 text-slate-700 text-xs rounded-xl p-2.5 focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none">
+                            <option value="">Semua Periode Batch</option>
+                            <option value="Batch 1 2021/2022">Batch 1 2021/2022</option>
+                            <option value="Batch 2 2021/2022">Batch 2 2021/2022</option>
+                            <option value="Batch 1 2022/2023">Batch 1 2022/2023</option>
+                        </select>
+                    </div>
+
+                    <!-- Dropdown Fakultas -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Fakultas</label>
+                        <select id="filterFakultas" onchange="filterData()" class="w-full bg-slate-50 border border-slate-200 text-slate-700 text-xs rounded-xl p-2.5 focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none">
+                            <option value="">Semua Fakultas</option>
+                        </select>
+                    </div>
+
+                    <!-- Dropdown Skema -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Skema Pengabdian</label>
+                        <select id="filterSkema" onchange="filterData()" class="w-full bg-slate-50 border border-slate-200 text-slate-700 text-xs rounded-xl p-2.5 focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none">
+                            <option value="">Semua Skema</option>
+                        </select>
+                    </div>
+
+                    <!-- Reset Button -->
+                    <div class="flex items-end">
+                        <button onclick="resetFilters()" class="w-full py-2.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold text-xs rounded-xl transition-colors flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-rotate-left"></i>
+                            <span>Reset Filter</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Data Table Card -->
+            <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+                <div class="px-6 py-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50/50">
+                    <div>
+                        <h3 class="font-bold text-slate-900 text-base">Daftar Penerima Hibah & Berkas</h3>
+                        <p class="text-xs text-slate-500" id="showingCount">Menampilkan 0 dari 0 data pengabdian</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-semibold text-slate-500">Tampilkan:</span>
+                        <select id="pageSize" onchange="changePageSize()" class="bg-white border border-slate-200 text-xs rounded-lg p-1.5 focus:ring-2 focus:ring-blue-500 outline-none">
+                            <option value="5">5</option>
+                            <option value="10" selected>10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Table Responsive Container -->
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs text-slate-600">
+                        <thead class="bg-slate-100 text-slate-700 uppercase tracking-wider font-bold text-[11px] border-b border-slate-200">
+                            <tr>
+                                <th class="px-4 py-3.5 text-center w-12">No</th>
+                                <th class="px-4 py-3.5 min-w-[140px]">Periode</th>
+                                <th class="px-4 py-3.5 min-w-[200px]">Nama Dosen & Prodi</th>
+                                <th class="px-4 py-3.5 text-center min-w-[100px]">Skema</th>
+                                <th class="px-4 py-3.5 min-w-[280px]">Judul Pengabdian</th>
+                                <th class="px-4 py-3.5 text-right min-w-[130px]">Dana Disetujui</th>
+                                <th class="px-4 py-3.5 text-center min-w-[220px]">Berkas Download</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody" class="divide-y divide-slate-100">
+                            <!-- JS Will Render Rows Here -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Empty State -->
+                <div id="emptyState" class="hidden p-12 text-center">
+                    <div class="w-16 h-16 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mx-auto mb-3 text-2xl">
+                        <i class="fa-solid fa-folder-open"></i>
+                    </div>
+                    <h4 class="font-bold text-slate-700 text-sm">Data Tidak Ditemukan</h4>
+                    <p class="text-xs text-slate-400 mt-1">Coba sesuaikan kata kunci pencarian atau filter pilihan Anda.</p>
+                </div>
+
+                <!-- Table Pagination Footer -->
+                <div class="px-6 py-4 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50/50">
+                    <div class="text-xs text-slate-500" id="paginationInfo">
+                        Halaman 1 dari 1
+                    </div>
+                    <div class="flex items-center space-x-1" id="paginationBtns">
+                        <!-- Render Pagination -->
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-white border-t border-slate-200 mt-auto py-4">
+            <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500">
+                &copy; Dashboard Pengabdian Masyarakat • Terintegrasi Google Spreadsheet
+            </div>
+        </footer>
+    </div>
+
+    <!-- Download Modal -->
+    <div id="downloadModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100 transform transition-all scale-100">
+            <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+                <div class="flex items-center gap-2 text-slate-800 font-bold">
+                    <i class="fa-solid fa-cloud-arrow-down text-blue-600 text-lg"></i>
+                    <span>Unduh Berkas Pengabdian</span>
+                </div>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            
+            <div class="py-4 space-y-3">
+                <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-100 text-xs space-y-1">
+                    <p class="text-slate-500">Ketua Pelaksana:</p>
+                    <p class="font-bold text-slate-800" id="modalDosen">-</p>
+                    <p class="text-slate-500 pt-1">Judul:</p>
+                    <p class="font-medium text-slate-700 line-clamp-2" id="modalJudul">-</p>
+                </div>
+
+                <div class="space-y-2 pt-2" id="modalLinksContainer">
+                    <!-- Links injected by JS -->
+                </div>
+            </div>
+
+            <div class="pt-3 border-t border-slate-100 flex justify-end">
+                <button onclick="closeModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-xl transition-colors">
+                    Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Data & Logic -->
+    <script>
+        // Sample dataset hibah pengabdian masyarakat lengkap
+        const rawData = [
+            {
+                no: 1,
+                batch: "Batch 1 2021/2022",
+                dosen: "Wahyu Utami, M.Si., Ph.D.",
+                fakultas: "Fakultas Farmasi",
+                prodi: "Farmasi",
+                skema: "P2TTG",
+                judul: "Peningkatan Kualitas Produksi Dan Standarisasi Produk Vermus® Produksi Berkah Alam",
+                dana: 16250000,
+                proposal: "https://drive.google.com/file/d/sample-proposal-1",
+                lapKemajuan: "https://drive.google.com/file/d/sample-lapkem-1",
+                kontrak: "https://drive.google.com/file/d/sample-kontrak-1",
+                lapAkhir: "https://drive.google.com/file/d/sample-lapakhir-1"
+            },
+            {
+                no: 2,
+                batch: "Batch 1 2021/2022",
+                dosen: "Dr. Kuswaji Dwi Priyono, M.Si.",
+                fakultas: "Fakultas Geografi",
+                prodi: "Geografi",
+                skema: "P2AD",
+                judul: "Gerakan Minum Jamu Di SMPB 3 Tawangsari Sukoharjo Menuju Masyarakat Sehat Pasca Covid-19",
+                dana: 18000000,
+                proposal: "https://drive.google.com/file/d/sample-proposal-2",
+                lapKemajuan: "https://drive.google.com/file/d/sample-lapkem-2",
+                kontrak: "https://drive.google.com/file/d/sample-kontrak-2",
+                lapAkhir: "https://drive.google.com/file/d/sample-lapakhir-2"
+            },
+            {
+                no: 3,
+                batch: "Batch 1 2021/2022",
+                dosen: "Dr.Eng. Yusuf Sulistyo Nugroho, ST., M.Eng.",
+                fakultas: "Fakultas Teknik",
+                prodi: "Informatika",
+                skema: "P2TTG",
+                judul: "Penerapan Sistem IoT Smart Farming Pada Kelompok Tani Desa Nguter",
+                dana: 22500000,
+                proposal: "#",
+                lapKemajuan: "#",
+                kontrak: "#",
+                lapAkhir: "#"
+            },
+            {
+                no: 4,
+                batch: "Batch 2 2021/2022",
+                dosen: "drg. Dendy Murdiyanto, MDSc.",
+                fakultas: "Fakultas Kedokteran Gigi",
+                prodi: "Kedokteran Gigi",
+                skema: "P2AD",
+                judul: "Edukasi Kebersihan Gigi dan Mulut Anak Sekolah Dasar di Daerah Sub-Urban",
+                dana: 15000000,
+                proposal: "#",
+                lapKemajuan: "#",
+                kontrak: "#",
+                lapAkhir: "#"
+            },
+            {
+                no: 5,
+                batch: "Batch 2 2021/2022",
+                dosen: "Dr. drg. Morita Sari, MPH.",
+                fakultas: "Fakultas Kedokteran Gigi",
+                prodi: "Kedokteran Gigi",
+                skema: "P2AD",
+                judul: "Pelatihan Kader Kesehatan Gigi Posyandu Terpadu Desa Sukoharjo",
+                dana: 17500000,
+                proposal: "#",
+                lapKemajuan: "#",
+                kontrak: "#",
+                lapAkhir: "#"
+            },
+            {
+                no: 6,
+                batch: "Batch 1 2022/2023",
+                dosen: "Sulastri, S.Kp., M.Kes.",
+                fakultas: "Fakultas Ilmu Kesehatan",
+                prodi: "Keperawatan",
+                skema: "P2KKS",
+                judul: "Pendampingan Manajemen Stres Bagi Lansia Di Panti Wredha Dharma Bakti",
+                dana: 20000000,
+                proposal: "#",
+                lapKemajuan: "#",
+                kontrak: "#",
+                lapAkhir: "#"
+            },
+            {
+                no: 7,
+                batch: "Batch 1 2022/2023",
+                dosen: "Ns. Dian Hudiyawati, M.Kep.",
+                fakultas: "Fakultas Ilmu Kesehatan",
+                prodi: "Keperawatan",
+                skema: "P2KKS",
+                judul: "Program Skrining Awal Hipertensi dan Pelatihan Perawatan Mandiri Pasien Kronis",
+                dana: 19500000,
+                proposal: "#",
+                lapKemajuan: "#",
+                kontrak: "#",
+                lapAkhir: "#"
+            },
+            {
+                no: 8,
+                batch: "Batch 1 2022/2023",
+                dosen: "Vinami Yulian, S.Kep., Ns., M.Sc.",
+                fakultas: "Fakultas Ilmu Kesehatan",
+                prodi: "Keperawatan",
+                skema: "P2AD",
+                judul: "Pemberdayaan Ibu Rumah Tangga Dalam Pencegahan Stunting Balita Desa Karanganyar",
+                dana: 16800000,
+                proposal: "#",
+                lapKemajuan: "#",
+                kontrak: "#",
+                lapAkhir: "#"
+            },
+            {
+                no: 9,
+                batch: "Batch 1 2021/2022",
+                dosen: "Arum Pratiwi, S.Kp., M.Kes., Ph.D.",
+                fakultas: "Fakultas Ilmu Kesehatan",
+                prodi: "Keperawatan",
+                skema: "P2KKS",
+                judul: "Model Pendampingan Komunitas Berbasis Keluarga Pada Penderita ODGJ",
+                dana: 25000000,
+                proposal: "#",
+                lapKemajuan: "#",
+                kontrak: "#",
+                lapAkhir: "#"
+            },
+            {
+                no: 10,
+                batch: "Batch 2 2021/2022",
+                dosen: "Dra. Mabruroh, M.Si.",
+                fakultas: "Fakultas Ekonomi dan Bisnis",
+                prodi: "Manajemen",
+                skema: "P2TTG",
+                judul: "Pelatihan Pembukuan Digital dan Pemasaran Online Bagi UMKM Kerajinan Bambu",
+                dana: 17000000,
+                proposal: "#",
+                lapKemajuan: "#",
+                kontrak: "#",
+                lapAkhir: "#"
+            },
+            {
+                no: 11,
+                batch: "Batch 2 2021/2022",
+                dosen: "Dr. Muzakar Isa, SE., M.Si.",
+                fakultas: "Fakultas Ekonomi dan Bisnis",
+                prodi: "Manajemen",
+                skema: "P2TTG",
+                judul: "Pengembangan Strategi Branding Ekspor Produk Batik Lokal Wonogiri",
+                dana: 21000000,
+                proposal: "#",
+                lapKemajuan: "#",
+                kontrak: "#",
+                lapAkhir: "#"
+            },
+            {
+                no: 12,
+                batch: "Batch 1 2022/2023",
+                dosen: "Muhammad Sholahuddin, SE., M.Si., Ph.D.",
+                fakultas: "Fakultas Ekonomi dan Bisnis",
+                prodi: "Manajemen",
+                skema: "P2AD",
+                judul: "Pendampingan Tata Kelola Keuangan Syariah Pada Koperasi Pesantren",
+                dana: 19000000,
+                proposal: "#",
+                lapKemajuan: "#",
+                kontrak: "#",
+                lapAkhir: "#"
+            },
+            {
+                no: 13,
+                batch: "Batch 1 2021/2022",
+                dosen: "Drs. Joko Suwandi, M.Pd.",
+                fakultas: "FKIP",
+                prodi: "Pendidikan Akuntansi",
+                skema: "P2AD",
+                judul: "Workshop Media Pembelajaran Interaktif Bagi Guru Sekolah Dasar Muhammadiyah",
+                dana: 14500000,
+                proposal: "#",
+                lapKemajuan: "#",
+                kontrak: "#",
+                lapAkhir: "#"
+            },
+            {
+                no: 14,
+                batch: "Batch 1 2022/2023",
+                dosen: "Dr. Miftakhul Huda, M.Ag.",
+                fakultas: "Fakultas Agama Islam",
+                prodi: "Hukum Ekonomi Syariah",
+                skema: "P2KKS",
+                judul: "Penyuluhan Hukum Keluarga dan Ketahanan Ekonomi Rumah Tangga Muda",
+                dana: 16000000,
+                proposal: "#",
+                lapKemajuan: "#",
+                kontrak: "#",
+                lapAkhir: "#"
+            },
+            {
+                no: 15,
+                batch: "Batch 2 2021/2022",
+                dosen: "Prof. Dr. Ali Imron Al Ma'ruf, M.Hum.",
+                fakultas: "FKIP",
+                prodi: "Pendidikan Bahasa Indonesia",
+                skema: "P2KKS",
+                judul: "Pelestarian Sastra Lisan Lokal Melalui Sanggar Seni Budaya Remaja",
+                dana: 24000000,
+                proposal: "#",
+                lapKemajuan: "#",
+                kontrak: "#",
+                lapAkhir: "#"
+            },
+            {
+                no: 16,
+                batch: "Batch 1 2022/2023",
+                dosen: "Dr. Santhyami, M.Si.",
+                fakultas: "FKIP",
+                prodi: "Pendidikan Biologi",
+                skema: "P2TTG",
+                judul: "Pelatihan Pembuatan Kompos Organik Berbasis Komposter Rumah Tangga",
+                dana: 15500000,
+                proposal: "#",
+                lapKemajuan: "#",
+                kontrak: "#",
+                lapAkhir: "#"
+            },
+            {
+                no: 17,
+                batch: "Batch 1 2021/2022",
+                dosen: "Dra. Suparti, M.Si.",
+                fakultas: "FKIP",
+                prodi: "Pendidikan Biologi",
+                skema: "P2TTG",
+                judul: "Budidaya Maggot BSF Sebagai Pakan Ternak Alternatif Desa Mojolaban",
+                dana: 18500000,
+                proposal: "#",
+                lapKemajuan: "#",
+                kontrak: "#",
+                lapAkhir: "#"
+            },
+            {
+                no: 18,
+                batch: "Batch 2 2021/2022",
+                dosen: "Djumadi, M.Pd.",
+                fakultas: "FKIP",
+                prodi: "Pendidikan Biologi",
+                skema: "P2AD",
+                judul: "Pengembangan Taman Kehati Sekolah Sebagai Laboratorium Alam",
+                dana: 14000000,
+                proposal: "#",
+                lapKemajuan: "#",
+                kontrak: "#",
+                lapAkhir: "#"
+            },
+            {
+                no: 19,
+                batch: "Batch 1 2022/2023",
+                dosen: "dr. Iin Novita Nurhidayati Kasim, M.Sc.",
+                fakultas: "Fakultas Kedokteran",
+                prodi: "Kedokteran Umum",
+                skema: "P2AD",
+                judul: "Deteksi Dini dan Edukasi Pencegahan Penyakit Tidak Menular Di Komunitas Lansia",
+                dana: 20000000,
+                proposal: "#",
+                lapKemajuan: "#",
+                kontrak: "#",
+                lapAkhir: "#"
+            },
+            {
+                no: 20,
+                batch: "Batch 1 2022/2023",
+                dosen: "Dr. dr. Flora Ramona Sigit Prakoeswa, M.Kes., Sp.DVE.",
+                fakultas: "Fakultas Kedokteran",
+                prodi: "Kedokteran Umum",
+                skema: "P2KKS",
+                judul: "Edukasi Kesehatan Kulit dan Kusta Di Pesantren Wilayah Jawa Tengah",
+                dana: 23000000,
+                proposal: "#",
+                lapKemajuan: "#",
+                kontrak: "#",
+                lapAkhir: "#"
+            }
+        ];
+
+        // Global State
+        let filteredData = [...rawData];
+        let currentPage = 1;
+        let pageSize = 10;
+
+        // Initialization
+        window.onload = function() {
+            populateDropdowns();
+            filterData();
+        };
+
+        // Format Currency IDR
+        function formatRupiah(number) {
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(number);
+        }
+
+        // Populate Dynamic Dropdowns (Fakultas & Skema)
+        function populateDropdowns() {
+            const fakultasSet = new Set(rawData.map(item => item.fakultas));
+            const skemaSet = new Set(rawData.map(item => item.skema));
+
+            const fakultasSelect = document.getElementById('filterFakultas');
+            fakultasSet.forEach(f => {
+                const opt = document.createElement('option');
+                opt.value = f;
+                opt.textContent = f;
+                fakultasSelect.appendChild(opt);
+            });
+
+            const skemaSelect = document.getElementById('filterSkema');
+            skemaSet.forEach(s => {
+                const opt = document.createElement('option');
+                opt.value = s;
+                opt.textContent = s;
+                skemaSelect.appendChild(opt);
+            });
+        }
+
+        // Filter Logic
+        function filterData() {
+            const searchVal = document.getElementById('searchInput').value.toLowerCase();
+            const batchVal = document.getElementById('filterBatch').value;
+            const fakultasVal = document.getElementById('filterFakultas').value;
+            const skemaVal = document.getElementById('filterSkema').value;
+
+            filteredData = rawData.filter(item => {
+                const matchSearch = item.dosen.toLowerCase().includes(searchVal) ||
+                                    item.judul.toLowerCase().includes(searchVal) ||
+                                    item.prodi.toLowerCase().includes(searchVal);
+                
+                const matchBatch = batchVal === "" || item.batch === batchVal;
+                const matchFakultas = fakultasVal === "" || item.fakultas === fakultasVal;
+                const matchSkema = skemaVal === "" || item.skema === skemaVal;
+
+                return matchSearch && matchBatch && matchFakultas && matchSkema;
+            });
+
+            currentPage = 1;
+            updateStats();
+            renderTable();
+        }
+
+        // Reset All Filters
+        function resetFilters() {
+            document.getElementById('searchInput').value = "";
+            document.getElementById('filterBatch').value = "";
+            document.getElementById('filterFakultas').value = "";
+            document.getElementById('filterSkema').value = "";
+            filterData();
+        }
+
+        // Update Summary Cards Stats
+        function updateStats() {
+            const totalKegiatan = filteredData.length;
+            const totalDana = filteredData.reduce((sum, item) => sum + item.dana, 0);
+            
+            // Unique Dosen
+            const uniqueDosen = new Set(filteredData.map(item => item.dosen)).size;
+
+            // Skema terbanyak
+            const skemaCounts = {};
+            filteredData.forEach(item => {
+                skemaCounts[item.skema] = (skemaCounts[item.skema] || 0) + 1;
+            });
+            let topSkema = "-";
+            let maxCount = 0;
+            for (const s in skemaCounts) {
+                if (skemaCounts[s] > maxCount) {
+                    maxCount = skemaCounts[s];
+                    topSkema = s;
+                }
+            }
+
+            document.getElementById('stat-total-kegiatan').innerText = totalKegiatan;
+            document.getElementById('stat-total-dana').innerText = formatRupiah(totalDana);
+            document.getElementById('stat-total-dosen').innerText = uniqueDosen;
+            document.getElementById('stat-top-skema').innerText = topSkema;
+
+            document.getElementById('showingCount').innerText = `Menampilkan ${totalKegiatan} dari ${rawData.length} data pengabdian`;
+        }
+
+        // Render Table Rows
+        function renderTable() {
+            const tbody = document.getElementById('tableBody');
+            const emptyState = document.getElementById('emptyState');
+            tbody.innerHTML = "";
+
+            if (filteredData.length === 0) {
+                emptyState.classList.remove('hidden');
+                document.getElementById('paginationInfo').innerText = "Halaman 0 dari 0";
+                document.getElementById('paginationBtns').innerHTML = "";
+                return;
+            } else {
+                emptyState.classList.add('hidden');
+            }
+
+            const startIndex = (currentPage - 1) * pageSize;
+            const endIndex = Math.min(startIndex + pageSize, filteredData.length);
+            const paginatedData = filteredData.slice(startIndex, endIndex);
+
+            paginatedData.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-blue-50/40 transition-colors";
+
+                // Color badge based on skema
+                let badgeClass = "bg-blue-50 text-blue-700 border-blue-200";
+                if(item.skema === 'P2TTG') badgeClass = "bg-purple-50 text-purple-700 border-purple-200";
+                if(item.skema === 'P2AD') badgeClass = "bg-emerald-50 text-emerald-700 border-emerald-200";
+                if(item.skema === 'P2KKS') badgeClass = "bg-amber-50 text-amber-700 border-amber-200";
+
+                tr.innerHTML = `
+                    <td class="px-4 py-3.5 text-center font-medium text-slate-400">${startIndex + index + 1}</td>
+                    <td class="px-4 py-3.5 font-medium text-slate-700">
+                        <span class="inline-block bg-slate-100 text-slate-700 text-[11px] font-semibold px-2 py-0.5 rounded border border-slate-200">
+                            ${item.batch}
+                        </span>
+                    </td>
+                    <td class="px-4 py-3.5">
+                        <div class="font-bold text-slate-900">${item.dosen}</div>
+                        <div class="text-[11px] text-slate-500">${item.fakultas} • <span class="text-blue-600 font-medium">${item.prodi}</span></div>
+                    </td>
+                    <td class="px-4 py-3.5 text-center">
+                        <span class="px-2.5 py-1 text-[11px] font-bold rounded-md border ${badgeClass}">
+                            ${item.skema}
+                        </span>
+                    </td>
+                    <td class="px-4 py-3.5 font-medium text-slate-800 leading-snug">
+                        ${item.judul}
+                    </td>
+                    <td class="px-4 py-3.5 text-right font-bold text-slate-900 whitespace-nowrap">
+                        ${formatRupiah(item.dana)}
+                    </td>
+                    <td class="px-4 py-3.5 text-center">
+                        <div class="flex items-center justify-center gap-1.5 flex-wrap">
+                            <button onclick='openDownloadModal(${JSON.stringify(item)})' class="px-2.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-[11px] font-semibold rounded-lg shadow-sm transition-all flex items-center gap-1">
+                                <i class="fa-solid fa-download"></i>
+                                <span>Unduh Berkas</span>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            renderPagination();
+        }
+
+        // Change Page Size
+        function changePageSize() {
+            pageSize = parseInt(document.getElementById('pageSize').value);
+            currentPage = 1;
+            renderTable();
+        }
+
+        // Pagination Logic
+        function renderPagination() {
+            const totalPages = Math.ceil(filteredData.length / pageSize);
+            const container = document.getElementById('paginationBtns');
+            const info = document.getElementById('paginationInfo');
+            container.innerHTML = "";
+
+            info.innerText = `Halaman ${currentPage} dari ${totalPages || 1}`;
+
+            if (totalPages <= 1) return;
+
+            // Prev Button
+            const prevBtn = document.createElement('button');
+            prevBtn.className = `px-2.5 py-1 text-xs rounded-lg border border-slate-200 ${currentPage === 1 ? 'opacity-50 cursor-not-allowed bg-slate-50 text-slate-400' : 'bg-white hover:bg-slate-50 text-slate-600'}`;
+            prevBtn.innerHTML = `<i class="fa-solid fa-chevron-left"></i>`;
+            prevBtn.onclick = () => { if(currentPage > 1) { currentPage--; renderTable(); } };
+            container.appendChild(prevBtn);
+
+            // Page numbers
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                    const btn = document.createElement('button');
+                    btn.className = `px-3 py-1 text-xs font-semibold rounded-lg transition-colors ${i === currentPage ? 'bg-blue-600 text-white' : 'bg-white border border-slate-200 hover:bg-slate-50 text-slate-600'}`;
+                    btn.innerText = i;
+                    btn.onclick = () => { currentPage = i; renderTable(); };
+                    container.appendChild(btn);
+                }
+            }
+
+            // Next Button
+            const nextBtn = document.createElement('button');
+            nextBtn.className = `px-2.5 py-1 text-xs rounded-lg border border-slate-200 ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed bg-slate-50 text-slate-400' : 'bg-white hover:bg-slate-50 text-slate-600'}`;
+            nextBtn.innerHTML = `<i class="fa-solid fa-chevron-right"></i>`;
+            nextBtn.onclick = () => { if(currentPage < totalPages) { currentPage++; renderTable(); } };
+            container.appendChild(nextBtn);
+        }
+
+        // Modal Handlers
+        function openDownloadModal(item) {
+            document.getElementById('modalDosen').innerText = item.dosen;
+            document.getElementById('modalJudul').innerText = item.judul;
+
+            const linksContainer = document.getElementById('modalLinksContainer');
+            linksContainer.innerHTML = `
+                <a href="${item.proposal}" ${item.proposal !== '#' ? 'target="_blank"' : ''} class="flex items-center justify-between p-2.5 rounded-xl border border-slate-200 hover:border-blue-400 hover:bg-blue-50/50 transition-all text-xs group">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center font-bold">
+                            <i class="fa-solid fa-file-pdf"></i>
+                        </div>
+                        <div>
+                            <p class="font-bold text-slate-800">Proposal Pengabdian</p>
+                            <p class="text-[10px] text-slate-400">PDF Document • Terverifikasi</p>
+                        </div>
+                    </div>
+                    <span class="text-blue-600 group-hover:translate-x-1 transition-transform font-semibold">
+                        <i class="fa-solid fa-arrow-down-long"></i> Unduh
+                    </span>
+                </a>
+
+                <a href="${item.lapKemajuan}" ${item.lapKemajuan !== '#' ? 'target="_blank"' : ''} class="flex items-center justify-between p-2.5 rounded-xl border border-slate-200 hover:border-emerald-400 hover:bg-emerald-50/50 transition-all text-xs group">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold">
+                            <i class="fa-solid fa-file-lines"></i>
+                        </div>
+                        <div>
+                            <p class="font-bold text-slate-800">Laporan Kemajuan</p>
+                            <p class="text-[10px] text-slate-400">PDF Document • 70% Pelaksanaan</p>
+                        </div>
+                    </div>
+                    <span class="text-emerald-600 group-hover:translate-x-1 transition-transform font-semibold">
+                        <i class="fa-solid fa-arrow-down-long"></i> Unduh
+                    </span>
+                </a>
+
+                <a href="${item.kontrak}" ${item.kontrak !== '#' ? 'target="_blank"' : ''} class="flex items-center justify-between p-2.5 rounded-xl border border-slate-200 hover:border-amber-400 hover:bg-amber-50/50 transition-all text-xs group">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center font-bold">
+                            <i class="fa-solid fa-file-contract"></i>
+                        </div>
+                        <div>
+                            <p class="font-bold text-slate-800">Surat Perjanjian / Kontrak</p>
+                            <p class="text-[10px] text-slate-400">PDF Document • Resmi</p>
+                        </div>
+                    </div>
+                    <span class="text-amber-600 group-hover:translate-x-1 transition-transform font-semibold">
+                        <i class="fa-solid fa-arrow-down-long"></i> Unduh
+                    </span>
+                </a>
+
+                <a href="${item.lapAkhir}" ${item.lapAkhir !== '#' ? 'target="_blank"' : ''} class="flex items-center justify-between p-2.5 rounded-xl border border-slate-200 hover:border-purple-400 hover:bg-purple-50/50 transition-all text-xs group">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center font-bold">
+                            <i class="fa-solid fa-file-circle-check"></i>
+                        </div>
+                        <div>
+                            <p class="font-bold text-slate-800">Laporan Akhir Pengabdian</p>
+                            <p class="text-[10px] text-slate-400">PDF Document • Lunas/Selesai</p>
+                        </div>
+                    </div>
+                    <span class="text-purple-600 group-hover:translate-x-1 transition-transform font-semibold">
+                        <i class="fa-solid fa-arrow-down-long"></i> Unduh
+                    </span>
+                </a>
+            `;
+
+            document.getElementById('downloadModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('downloadModal').classList.add('hidden');
+        }
+
+        // Export to CSV
+        function exportToCSV() {
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "No,Periode Batch,Nama Dosen,Fakultas,Prodi,Skema,Judul Pengabdian,Dana Disetujui\n";
+
+            filteredData.forEach(row => {
+                const cleanJudul = `"${row.judul.replace(/"/g, '""')}"`;
+                const cleanDosen = `"${row.dosen.replace(/"/g, '""')}"`;
+                csvContent += `${row.no},${row.batch},${cleanDosen},${row.fakultas},${row.prodi},${row.skema},${cleanJudul},${row.dana}\n`;
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "Hibah_Pengabdian_Masyarakat.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+</body>
+</html>
